@@ -2,6 +2,9 @@
 
 it's an assist script for get 'air polution rate' , 'temperature' and 'windspeed' 
 
+![](photo_2019-01-01_11-14-43.jpg )
+
+
 for using you have to install dependencies 
 by enter this commands in the terminal : 
 
