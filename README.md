@@ -6,6 +6,8 @@ for using you have to install dependencies
 by enter this commands in the terminal : 
 
    ` sudo pip3 install bs4,requests,khayyam,rtl `
+
+
 after installation you can use it .. :) 
 be happy and enjoy it .. 
 
