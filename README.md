@@ -20,10 +20,9 @@ be happy and enjoy it ..
 
 somtimes site have been crashed and won't show correct values 
 
-like this : 
 ![](error_reason.png)
 
 
 ** in this case script will show you '?' instead of value because of it doesn't exist **
 
-![](while_error.jpg)
+![](while-error.jpg)
