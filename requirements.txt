@@ -1,4 +1,5 @@
 bs4
 requests
-khayyam
 rtl
+Pillow
+
