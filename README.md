@@ -1,28 +1,9 @@
-# Aloodak #
+# آلودک #
 
-it's an assist script for get 'air polution rate' , 'temperature' and 'windspeed' 
+آلودک یک اسکریپت ساده پایتونی برای اطلاع رسانی آلودگی هوای تهران است 
 
-![](demo.jpg )
+اگر شهر شما هم سامانه گزارش آلودگی هوای برخط دارد با ما در ارتباط باشید تا این برنامه برای شهر شما نیز شخصی سازی شود
 
-
-for using you have to install dependencies 
-by enter this commands in the terminal : 
-
-   ` sudo pip3 install -r requirements.txt
-
-after installation you can use it .. :) 
-be happy and enjoy it .. 
-
- -- note : it just use for my city (Terhran/IRAN) | GMT +3:30 
+![](report.png)
 
 
-# Update Note - Site Crash ! #
-
-somtimes site have been crashed and won't show correct values 
-
-![](error_reason.png)
-
-
-** in this case script will show you '?' instead of value because of it doesn't exist **
-
-![](while-error.jpg)
