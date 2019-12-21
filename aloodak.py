@@ -39,7 +39,7 @@ class aloodak:
         color = soup.find_all(attrs={'id':'ContentPlaceHolder1_lblAqi3hBoxInfo23'})[0]['class'][1]
         status = rtl.rtl(soup.find_all(attrs={'id':'ContentPlaceHolder1_lblAqi3hDesc'})[0].text.split()[0])
         return {'color' : color,'polution_rate': pollution_rate, 'image_stat': image_stat, 'status' : rtl.rtl(status)}
-class image_maker():
+class info_maker():
     def __init__(self,data):
         self.name = "report.png"
         self.number_font = ImageFont.truetype("Sahel-Black.ttf", 140) # rate font style

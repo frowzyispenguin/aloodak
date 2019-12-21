@@ -1,5 +1,5 @@
 from aloodak import * 
 data = aloodak.parser()
-image = image_maker(data)
-image.draw()
-image.cpation()
+info = info_maker(data)
+info.draw()
+info.cpation()
