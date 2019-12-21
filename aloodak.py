@@ -2,6 +2,7 @@ import requests
 import rtl
 from bs4 import BeautifulSoup as bs
 from PIL import Image, ImageDraw, ImageFont
+import os
 # defining textcolor / light/dark colors has calculated by hps
 bg={\
  'bg-aqua': (0, 0, 0),\
@@ -14,7 +15,12 @@ bg={\
  'bg-red': (0, 0, 0),\
  'bg-teal': (0, 0, 0),\
  'bg-yellow': (0, 0, 0),\
- 'bg-yellowgreen': (255, 255, 255)}
+ 'bg-yellowgreen': (255, 255, 255),
+ 'bg-orange': (255,255,255),
+ 'bg-gray': (255,255,255),
+ 'bg-gray-light': (0,0,0),
+ 'bg-black': (255,255,255),
+ }
 # for replacing english digits with persian ones
 digits = {'1':'۱', '2':'۲', '3':'۳', '4':'۴', '5':'۵', '6':'۶', '7':'۷', '8':'۸', '9':'۹', '0':'۰'}
 def en2per(string):
@@ -54,4 +60,12 @@ class image_maker():
         self.draw_object.text((175,250), rtl.rtl("اطلاع‌رسانی غیر‌رسمی آلودک"),bg[self.color],font=self.badge_font) 
         # saving image
         self.image.save(self.name)
+        status = os.getenv('STATUS')
+        status = os.popen("sha1sum report.png").read().split()[0]
         return None
+    def cpation(self):
+        items = {'شاخص آلودگی هوا : ' : en2per(self.rate), "وضعیت سلامت هوا : " : self.status}
+        with open("report.txt","w") as foo :
+            caption = [(item+items[item]) for item in items]
+            caption = '\n'.join(x for x in caption)
+            foo.write(caption)
