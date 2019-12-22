@@ -60,12 +60,15 @@ class info_maker():
         self.draw_object.text((175,250), rtl.rtl("اطلاع‌رسانی غیر‌رسمی آلودک"),bg[self.color],font=self.badge_font) 
         # saving image
         self.image.save(self.name)
+        return None
+    def checksum(self):
         status = os.getenv('STATUS')
         status = os.popen("sha1sum report.png").read().split()[0]
-        return None
+        return status
     def cpation(self):
         items = {'شاخص آلودگی هوا : ' : en2per(self.rate), "وضعیت سلامت هوا : " : self.status}
         with open("report.txt","w") as foo :
             caption = [(item+items[item]) for item in items]
             caption = '\n'.join(x for x in caption)
             foo.write(caption)
+    
