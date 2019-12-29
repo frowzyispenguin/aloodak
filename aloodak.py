@@ -1,8 +1,12 @@
+import jdatetime
 import requests
 import rtl
 from bs4 import BeautifulSoup as bs
 from PIL import Image, ImageDraw, ImageFont
+from datetime import date, datetime
 import os
+import pytz
+jdatetime.set_locale("fa_IR")
 # defining textcolor / light/dark colors has calculated by hps
 bg={\
  'bg-aqua': (0, 0, 0),\
@@ -23,6 +27,26 @@ bg={\
  }
 # for replacing english digits with persian ones
 digits = {'1':'۱', '2':'۲', '3':'۳', '4':'۴', '5':'۵', '6':'۶', '7':'۷', '8':'۸', '9':'۹', '0':'۰'}
+def emoji(rate):
+    # decreption of air quality 
+    if rate <= 50:return "😄" # 0-50
+    elif rate <= 100:return "🙂" # 51-100
+    elif rate <=150: return "😷" # 101-150
+    elif rate <= 200:return "🤢" # 151-200 
+    elif rate > 200 :return "☠️" # over 200
+    else :return "😷" # for exceptions
+def now():
+    tz = pytz.timezone('Asia/Tehran') 
+    tehran_now = datetime.now(tz)    
+    return tehran_now.strftime("%H:%M")
+
+def today():
+    today = jdatetime.datetime.now(pytz.timezone("Asia/Tehran")).strftime("%A %y/%m/%d").split()
+    date = today[-1]
+    today.pop(-1)
+    day = " ".join(i.strip() for i in today)
+    return [day, en2per(date)]
+
 def en2per(string):
     # it parses string in list for acessing to string charachters
     chars = list(map(lambda x: digits[x] if x.isdecimal() else x,list(string)))
@@ -66,7 +90,7 @@ class info_maker():
         status = os.popen("sha1sum report.png").read().split()[0]
         return status
     def cpation(self):
-        items = {'شاخص آلودگی هوا : ' : en2per(self.rate), "وضعیت سلامت هوا : " : self.status}
+        items = {'◾️ آلودگی هوا : ' : en2per(self.rate), f"{emoji(int(self.rate))}وضعیت سلامت هوا : " : self.status, "🗓تاریخ :": ' - '.join([x for x in today()]), "🕓ساعت :" : en2per(now())}
         with open("report.txt","w") as foo :
             caption = [(item+items[item]) for item in items]
             caption = '\n'.join(x for x in caption)
