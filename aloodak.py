@@ -8,33 +8,17 @@ import os
 import pytz
 jdatetime.set_locale("fa_IR")
 # defining textcolor / light/dark colors has calculated by hps
-bg={\
- 'bg-aqua': (0, 0, 0),\
- 'bg-blue': (255, 255, 255),\
- 'bg-green': (0, 0, 0),\
- 'bg-light-blue': (0, 0, 0),\
- 'bg-lime': (0, 0, 0),\
- 'bg-navy': (255, 255, 255),\
- 'bg-olive': (0, 0, 0),\
- 'bg-red': (0, 0, 0),\
- 'bg-teal': (0, 0, 0),\
- 'bg-yellow': (0, 0, 0),\
- 'bg-yellowgreen': (255, 255, 255),
- 'bg-orange': (255,255,255),
- 'bg-gray': (255,255,255),
- 'bg-gray-light': (0,0,0),
- 'bg-black': (255,255,255),
- }
+
 # for replacing english digits with persian ones
 digits = {'1':'۱', '2':'۲', '3':'۳', '4':'۴', '5':'۵', '6':'۶', '7':'۷', '8':'۸', '9':'۹', '0':'۰'}
-def emoji(rate):
-    # decreption of air quality 
-    if rate <= 50:return "😄" # 0-50
-    elif rate <= 100:return "🙂" # 51-100
-    elif rate <=150: return "😷" # 101-150
-    elif rate <= 200:return "🤢" # 151-200 
-    elif rate > 200 :return "☠️" # over 200
-    else :return "😷" # for exceptions
+status = {
+    "Hazardous": "خطر اضطراری"
+    "Very Unhealthy": "خیلی ناسالم"
+    "Unhealthy": "ناسالم"
+    "Unhealthy for Senstive Groups": "ناسالم برای گروه های حساس"
+    "Moderate": "سالم"
+    "Good": "پاک"
+}
 def now():
     tz = pytz.timezone('Asia/Tehran') 
     tehran_now = datetime.now(tz)    
@@ -55,21 +39,23 @@ def en2per(string):
 class aloodak:
     def __init__(self):
         pass
-    def parser():
+    def parser(country,province,city):
         # request webserver and parsing data
-        soup = bs(requests.get("http://airnow.tehran.ir/home/home.aspx").text, "html.parser")
-        image_stat = soup.find_all(attrs={'id':'ContentPlaceHolder1_lblAqi3hBoxInfo23'})[0].img['src'].split("/")[-1]
-        pollution_rate = int(soup.find_all(attrs={'id':'ContentPlaceHolder1_lblAqi3h'})[0].text)
-        color = soup.find_all(attrs={'id':'ContentPlaceHolder1_lblAqi3hBoxInfo23'})[0]['class'][1]
-        status = rtl.rtl(soup.find_all(attrs={'id':'ContentPlaceHolder1_lblAqi3hDesc'})[0].text.split()[0])
-        return {'color' : color,'polution_rate': pollution_rate, 'image_stat': image_stat, 'status' : rtl.rtl(status)}
+        data = {}
+        url = f"https://www.airvisual.com/{country}/{province}/{city}"
+        src = requests.get(url).text
+        soup = bs(src, "html.parser")
+        data['status'] = soup.find_all(attrs={"class":"status-text"})[0].text #air status
+        data['aqi'] = en2per(soup.find_all(attrs={"class":"aqi"})[0].text.split("US")[0]) #aqi
+        data['pm'] = en2per(soup.find_all(attrs={"class":"pm-number"})[0].text.split("|")[1].strip()) #pm2.5
+        data['temperature'] = en2per(soup.find_all(attrs={"class":"forecast-info-icon-temp"})[0].text) #tempreture
+        data['humidity'] = en2per(soup.find_all(attrs={"class":"item-label-val"})[0].text) #humidity
+        return data
+
 class info_maker():
     def __init__(self,data):
         self.name = "report.png"
         self.number_font = ImageFont.truetype("Sahel-Black.ttf", 140) # rate font style
-        self.name_font =  ImageFont.truetype("Sahel-Black.ttf", 20) # title font style
-        self.badge_font = ImageFont.truetype("Sahel-Bold.ttf", 20) # badge font style
-        self.status_font =  ImageFont.truetype("Sahel-Black.ttf", 50) # status font style
         self.color = data['color'] # image color -> for example 'bg-green'
         self.rate = str(data['polution_rate']) # pollution rate
         self.status = data['status'] # pillution status
@@ -96,3 +82,4 @@ class info_maker():
             caption = '\n'.join(x for x in caption)
             foo.write(caption)
     
+print(aloodak.parser('iran','tehran','tehran'))
