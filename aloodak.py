@@ -11,13 +11,21 @@ jdatetime.set_locale("fa_IR")
 
 # for replacing english digits with persian ones
 digits = {'1':'۱', '2':'۲', '3':'۳', '4':'۴', '5':'۵', '6':'۶', '7':'۷', '8':'۸', '9':'۹', '0':'۰'}
-status = {
-    "Hazardous": "خطر اضطراری"
-    "Very Unhealthy": "خیلی ناسالم"
-    "Unhealthy": "ناسالم"
-    "Unhealthy for Senstive Groups": "ناسالم برای گروه های حساس"
-    "Moderate": "سالم"
+statusbar = {
+    "Hazardous": "خطر اضطراری",
+    "Very Unhealthy": "خیلی ناسالم",
+    "Unhealthy": "ناسالم",
+    "Unhealthy for Senstive Groups": "ناسالم برای گروه های حساس",
+    "Moderate": "سالم",
     "Good": "پاک"
+}
+color = {
+    "Hazardous": (104,62,81),
+    "Very Unhealthy": (99,70,117),
+    "Unhealthy": (175,44,59),
+    "Unhealthy for Senstive Groups": (178,88,38),
+    "Moderate": (165,127,35),
+    "Good": (113,139,58)
 }
 def now():
     tz = pytz.timezone('Asia/Tehran') 
@@ -48,38 +56,52 @@ class aloodak:
         data['status'] = soup.find_all(attrs={"class":"status-text"})[0].text #air status
         data['aqi'] = en2per(soup.find_all(attrs={"class":"aqi"})[0].text.split("US")[0]) #aqi
         data['pm'] = en2per(soup.find_all(attrs={"class":"pm-number"})[0].text.split("|")[1].strip()) #pm2.5
-        data['temperature'] = en2per(soup.find_all(attrs={"class":"forecast-info-icon-temp"})[0].text) #tempreture
+        data['temperature'] = en2per(soup.find_all(attrs={"class":"forecast-info-icon-temp"})[0].text) #temperature
         data['humidity'] = en2per(soup.find_all(attrs={"class":"item-label-val"})[0].text) #humidity
         return data
 
 class info_maker():
     def __init__(self,data):
-        self.name = "report.png"
-        self.number_font = ImageFont.truetype("Sahel-Black.ttf", 140) # rate font style
-        self.color = data['color'] # image color -> for example 'bg-green'
-        self.rate = str(data['polution_rate']) # pollution rate
-        self.status = data['status'] # pillution status
-        self.status = "ناسالم" if self.status.count("حساس") else self.status # changing long status
-    def draw(self):
-        self.image = Image.open(f"{self.color}.png") # opening image
+        self.imgdir = f"badges/{data['status']}.png"
+        self.font = ImageFont.truetype("Sahel-Black.ttf", 140) # rate font style
+        self.temperature = data['temperature']
+        self.humidity = data['humidity']
+        self.pm = data['pm']
+        self.aqi = str(data['aqi']) # pollution rate
+        self.status = statusbar[data['status']] # pollution status
+        self.color = color[data['status']]
+    def draw(self): 
+        self.image = Image.open(self.imgdir) # opening image
         self.draw_object = ImageDraw.Draw(self.image) # loafing draw module 
         # wrting data over image
-        self.draw_object.text((100, 30), rtl.rtl("شاخص آلودگی هوا"), bg[self.color], font=self.name_font) 
-        self.draw_object.text((50, 50) if len(str(self.rate)) == 3 else (100,50), en2per(self.rate),bg[self.color], font=self.number_font)
-        self.draw_object.text((400, 100), rtl.rtl(self.status),bg[self.color], font=self.status_font)
-        self.draw_object.text((175,250), rtl.rtl("اطلاع‌رسانی غیر‌رسمی آلودک"),bg[self.color],font=self.badge_font) 
+        if len(self.aqi) == 3:
+            self.draw_object.text((100,100),self.aqi,self.color,font=self.font)
+        elif len(self.aqi) == 2:
+            self.draw_object.text((130,100),self.aqi,self.color,font=self.font)
+        elif len(self.aqi) == 1:
+            self.draw_object.text((150,100),self.aqi,self.color,font=self.font) 
         # saving image
-        self.image.save(self.name)
+        self.image.save("report.png")
         return None
     def checksum(self):
         status = os.getenv('STATUS')
         status = os.popen("sha1sum report.png").read().split()[0]
         return status
     def cpation(self):
-        items = {'◾️ آلودگی هوا : ' : en2per(self.rate), f"{emoji(int(self.rate))}وضعیت سلامت هوا : " : self.status, "🗓تاریخ :": ' - '.join([x for x in today()]), "🕓ساعت :" : en2per(now())}
+        items = {"🔹شاخص آلودگی هوا : " : self.aqi,
+                 "🔹وضعیت هوا : " : self.status,
+                 "💧 رطوبت هوا : ":self.humidity,
+                 "🌡 دمای هوا : ":self.temperature,
+                 "💨 غلظت ذرات معلق در هوا : ":self.pm,
+                 "🗓تاریخ : " : ' - '.join([x for x in today()]),
+                 "🕓ساعت : " : en2per(now())
+                }
         with open("report.txt","w") as foo :
             caption = [(item+items[item]) for item in items]
             caption = '\n'.join(x for x in caption)
             foo.write(caption)
     
-print(aloodak.parser('iran','tehran','tehran'))
+data = aloodak.parser('iran','tehran','tehran')
+i = info_maker(data)
+i.draw()
+i.cpation()
