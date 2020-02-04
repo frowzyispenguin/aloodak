@@ -15,7 +15,7 @@ statusbar = {
     "Hazardous": "خطر اضطراری",
     "Very Unhealthy": "خیلی ناسالم",
     "Unhealthy": "ناسالم",
-    "Unhealthy for Senstive Groups": "ناسالم برای گروه های حساس",
+    "Unhealthy for Sensitive Groups": "ناسالم برای گروه های حساس",
     "Moderate": "سالم",
     "Good": "پاک"
 }
@@ -23,7 +23,7 @@ color = {
     "Hazardous": (104,62,81),
     "Very Unhealthy": (99,70,117),
     "Unhealthy": (175,44,59),
-    "Unhealthy for Senstive Groups": (178,88,38),
+    "Unhealthy for Sensitive'sive Groups": (178,88,38),
     "Moderate": (165,127,35),
     "Good": (113,139,58)
 }
@@ -100,8 +100,4 @@ class info_maker():
             caption = [(item+items[item]) for item in items]
             caption = '\n'.join(x for x in caption)
             foo.write(caption)
-    
-data = aloodak.parser('iran','tehran','tehran')
-i = info_maker(data)
-i.draw()
-i.cpation()
+
