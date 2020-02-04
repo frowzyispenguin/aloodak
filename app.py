@@ -8,7 +8,10 @@ while True:
     info.draw()
     info.cpation()
     if status != os.popen("sha1sum report.png").read().split()[0]: 
-        os.system("python3 bot.py")
-        status = info.checksum()
+        try:
+            os.system("python3 bot.py")
+            status = info.checksum()
+        except:
+            pass
     else:
         time.sleep(300)
