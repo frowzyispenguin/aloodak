@@ -23,7 +23,7 @@ color = {
     "Hazardous": (104,62,81),
     "Very Unhealthy": (99,70,117),
     "Unhealthy": (175,44,59),
-    "Unhealthy for Sensitive'sive Groups": (178,88,38),
+    "Unhealthy for Sensitive Groups": (178,88,38),
     "Moderate": (165,127,35),
     "Good": (113,139,58)
 }
