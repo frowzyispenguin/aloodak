@@ -50,14 +50,16 @@ class aloodak:
     def parser(country,province,city):
         # request webserver and parsing data
         data = {}
-        url = f"https://www.airvisual.com/{country}/{province}/{city}"
-        src = requests.get(url).text
-        soup = bs(src, "html.parser")
-        data['status'] = soup.find_all(attrs={"class":"status-text"})[0].text #air status
-        data['aqi'] = en2per(soup.find_all(attrs={"class":"aqi"})[0].text.split("US")[0]) #aqi
-        data['pm'] = en2per(soup.find_all(attrs={"class":"pm-number"})[0].text.split("|")[1].strip()) #pm2.5
-        data['temperature'] = en2per(soup.find_all(attrs={"class":"forecast-info-icon-temp"})[0].text) #temperature
-        data['humidity'] = en2per(soup.find_all(attrs={"class":"item-label-val"})[0].text) #humidity
+        key = "PUT YOU IQAIR API KEY HERE" 
+        url = f"http://api.airvisual.com/v2/city?city={city}&state={province}&country={country}&key={key}"
+        jsondata = requests.get(url).json() #json aqi and weather record
+        soup = bs(requests.get(f"https://www.iqair.com/{country}/{city}", "hmtl.parser") #webpage aqi and weather record
+
+        data['status'] = soup.find_all('span', attrs={"class":"aqi-status__text"})[0].text #air status
+        data['aqi'] = en2per(jsondata['data']['current']['pollution']['aqius']) #aqi
+        data['pm'] = en2per(soup.find_all("tbody", attrs={"_ngcontent-airvisual-web-c39":""})[4].find_all('td')[2].text) #pm2.5
+        data['temperature'] = en2per(jsondata['data']['current']['weather']['tp']) #temperature
+        data['humidity'] = en2per(j['data']['current']['weather']['hu']) #humidity
         return data
 
 class info_maker():
